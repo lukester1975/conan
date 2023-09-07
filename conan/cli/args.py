@@ -1,6 +1,8 @@
 from conan.cli.command import OnceArgument
 from conan.errors import ConanException
 
+import argparse
+
 _help_build_policies = '''Optional, specify which packages to build from source. Combining multiple
     '--build' options on one command line is allowed.
     Possible values:
@@ -95,6 +97,23 @@ def add_profiles_args(parser):
                 "")  # By default it is the HOST, the one we are building binaries for
         item_fn("build", ":b", ":build")
         item_fn("host", ":h", ":host")
+
+    # "-pr:hb" adds the profile to both the host and build profile list.
+    class HostBuildAction(argparse.Action):
+        def __call__(self, parser, namespace, values, option_string=None):
+            def append(dest):
+                items = getattr(namespace, dest, None)
+                items = items[:] if items else []
+                items.append(values)
+                setattr(namespace, dest, items)
+
+            append("profile_host")
+            append("profile_build")
+
+    # No long option might be unpalatable but it avoids polluting namespace with something.
+    # TODO just delete it after parse?
+    parser.add_argument("-pr:hb", default=None, action=HostBuildAction,
+                        help="Apply the specified profile to the host and build machines")
 
 
 def add_reference_args(parser):
