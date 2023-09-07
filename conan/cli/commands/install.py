@@ -36,6 +36,10 @@ def install(conan_api, parser, *args):
     parser.add_argument("--build-require", action='store_true', default=False,
                         help='Whether the provided path is a build-require')
     args = parser.parse_args(*args)
+    if not args.build:
+        default_build_mode = conan_api.config.get("core:default_build_mode")
+        if default_build_mode:
+            args.build = [default_build_mode]
     validate_common_graph_args(args)
 
     # basic paths

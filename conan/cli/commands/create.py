@@ -30,6 +30,10 @@ def create(conan_api, parser, *args):
                         help="Same as '--build' but only for the test_package requires. By default"
                              " if not specified it will take the '--build' value if specified")
     args = parser.parse_args(*args)
+    if not args.build:
+        default_build_mode = conan_api.config.get("core:default_build_mode")
+        if default_build_mode:
+            args.build = [default_build_mode]
 
     cwd = os.getcwd()
     path = conan_api.local.get_conanfile_path(args.path, cwd, py=True)

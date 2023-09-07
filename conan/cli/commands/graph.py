@@ -39,6 +39,10 @@ def graph_build_order(conan_api, parser, subparser, *args):
     """
     common_graph_args(subparser)
     args = parser.parse_args(*args)
+    if not args.build:
+        default_build_mode = conan_api.config.get("core:default_build_mode")
+        if default_build_mode:
+            args.build = [default_build_mode]
 
     # parameter validation
     if args.requires and (args.name or args.version or args.user or args.channel):

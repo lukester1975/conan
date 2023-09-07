@@ -24,6 +24,10 @@ def build(conan_api, parser, *args):
     add_common_install_arguments(parser)
     add_lockfile_args(parser)
     args = parser.parse_args(*args)
+    if not args.build:
+        default_build_mode = conan_api.config.get("core:default_build_mode")
+        if default_build_mode:
+            args.build = [default_build_mode]
 
     cwd = os.getcwd()
     path = conan_api.local.get_conanfile_path(args.path, cwd, py=True)

@@ -75,6 +75,10 @@ def cache_clean(conan_api: ConanAPI, parser, subparser, *args):
                            help="Remove only the packages matching a specific query, e.g., "
                                 "os=Windows AND (arch=x86 OR compiler=gcc)")
     args = parser.parse_args(*args)
+    if not args.build:
+        default_build_mode = conan_api.config.get("core:default_build_mode")
+        if default_build_mode:
+            args.build = [default_build_mode]
 
     ref_pattern = ListPattern(args.pattern or "*", rrev="*", package_id="*", prev="*")
     package_list = conan_api.list.select(ref_pattern, package_query=args.package_query)
